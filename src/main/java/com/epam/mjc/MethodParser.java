@@ -1,7 +1,8 @@
 package com.epam.mjc;
 
-public class MethodParser {
+import java.util.List;
 
+public class MethodParser {
     /**
      * Parses string that represents a method signature and stores all it's members into a {@link MethodSignature} object.
      * signatureString is a java-like method signature with following parts:
@@ -20,6 +21,20 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+        String[] signatureArray = signatureString.split( "\\(");
+        String[] signatureWithoutParametersArray = signatureArray[0].split(" ");
+        String[] parametersArray = signatureArray[1].substring(0, signatureArray[1].length()-1).split(", ");
+
+        MethodSignature methodSignature = new MethodSignature(signatureWithoutParametersArray[signatureWithoutParametersArray.length-1]);
+        methodSignature.setReturnType(signatureWithoutParametersArray[signatureWithoutParametersArray.length-2]);
+        methodSignature.setAccessModifier(signatureWithoutParametersArray.length == 3 ? signatureWithoutParametersArray[signatureWithoutParametersArray.length - 3] : null);
+
+        if(!parametersArray[0].isBlank()){
+            List<MethodSignature.Argument> arguments = methodSignature.getArguments();
+            for (String parameter : parametersArray) {
+                arguments.add(new MethodSignature.Argument(parameter.split(" ")[0], parameter.split(" ")[1]));
+            }
+        }
+        return methodSignature;
     }
 }
